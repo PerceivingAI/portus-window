@@ -1,0 +1,43 @@
+# Rust/Cargo
+/target/
+**/*.rs.bk
+
+
+# Python acceptance tooling
+__pycache__/
+*.py[cod]
+
+# Generated Windows acceptance evidence
+/artifacts/windows-acceptance/
+
+# Generated Linux acceptance evidence
+/artifacts/linux-acceptance/
+
+# Generated OSS/release evidence
+/artifacts/oss/
+
+# Tauri generated capability schemas
+/portus-window/gen/
+
+# Node/Web frontend (future workspace usage)
+node_modules/
+dist/
+
+# Local configuration & environment secrets
+.env
+.env.local
+.env.*.local
+
+# Databases & Runtime Sockets
+*.db
+*.sqlite
+*.sqlite3
+/tmp/portus-window.socket
+~/.cache/portus-window/
+
+# OS and Editor files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,42 @@
+[package]
+name = "portus-window"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+parking_lot.workspace = true
+dirs.workspace = true
+rusqlite.workspace = true
+time.workspace = true
+png = "=0.18.1"
+portus-window-protocol = { version = "=0.1.0", path = "../portus-window-protocol" }
+serde.workspace = true
+serde_json.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+tauri = { version = "=2.11.5", features = ["wry", "unstable"] }
+tokio.workspace = true
+url.workspace = true
+uuid = { version = "1.18", features = ["v4"] }
+x11rb = "=0.14.0"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+cairo-rs = { version = "=0.18.5", features = ["png"] }
+gio = "=0.18.4"
+gtk = "=0.18.2"
+soup3 = "=0.5.0"
+webkit2gtk = "=2.0.2"
+raw-window-handle = "=0.6.2"
+
+[target.x86_64-pc-windows-msvc.dependencies]
+windows = { version = "0.58.0", features = ["Win32_Foundation"] }
+winvd = "0.0.49"
+
+[build-dependencies]
+tauri-build = "=2.6.3"

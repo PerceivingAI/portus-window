@@ -1,0 +1,42 @@
+name: Dependency Security
+
+on:
+  push:
+    paths:
+      - "**/Cargo.toml"
+      - Cargo.lock
+      - deny.toml
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "**/Cargo.toml"
+      - Cargo.lock
+      - deny.toml
+      - ".github/workflows/**"
+  schedule:
+    - cron: "17 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deny:
+    name: cargo-deny and cargo-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: cargo-deny (licenses, advisories, bans, sources)
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          rust-version: "1.88.0"
+          command: check
+      - name: Install cargo-audit
+        run: cargo install --locked cargo-audit --version 0.22.2
+      - name: RustSec advisory audit
+        run: cargo audit

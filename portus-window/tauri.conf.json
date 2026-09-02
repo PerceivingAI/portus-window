@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "portus-window",
+  "version": "0.1.0",
+  "identifier": "ai.perceiving.portus-window",
+  "build": {
+    "frontendDist": "assets"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": false,
+    "category": "Utility",
+    "icon": [
+      "icons/icon.png"
+    ]
+  }
+}

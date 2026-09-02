@@ -1,0 +1,134 @@
+name: Release Packaging
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (for example, v0.1.0)"
+        required: true
+        default: "v0.1.0"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_TOOLCHAIN: "1.88.0"
+
+jobs:
+  build-linux:
+    name: Build Linux release executables
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            libgstreamer-plugins-base1.0-dev \
+            libgstreamer1.0-dev \
+            libgtk-3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            libwebkit2gtk-4.1-dev \
+            libxdo-dev \
+            pkg-config
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@1.88.0
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: release-linux-rust-1.88
+      - name: Build release executables
+        run: cargo build --release --workspace --locked
+      - name: Verify release executables
+        run: |
+          test -x target/release/portus-window
+          test -x target/release/portus-window-cli
+          file target/release/portus-window target/release/portus-window-cli
+      - name: Package Linux archive
+        run: |
+          rm -rf dist portus-window-linux-x86_64.tar.gz
+          mkdir -p dist/skills/portus-window
+          install -m 0755 target/release/portus-window dist/portus-window
+          install -m 0755 target/release/portus-window-cli dist/portus-window-cli
+          install -m 0644 LICENSE dist/LICENSE
+          install -m 0644 skills/portus-window/SKILL.md dist/skills/portus-window/SKILL.md
+          install -m 0755 scripts/install_skill.sh dist/install_skill.sh
+          tar -czf portus-window-linux-x86_64.tar.gz -C dist .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portus-window-linux-x86_64
+          path: portus-window-linux-x86_64.tar.gz
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows release executables
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@1.88.0
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: release-windows-rust-1.88
+      - name: Build release executables
+        run: cargo build --release --workspace --locked
+      - name: Verify release executables
+        shell: pwsh
+        run: |
+          if (!(Test-Path "target/release/portus-window.exe")) { throw "Missing portus-window.exe" }
+          if (!(Test-Path "target/release/portus-window-cli.exe")) { throw "Missing portus-window-cli.exe" }
+      - name: Package Windows archive
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force dist -ErrorAction SilentlyContinue
+          Remove-Item -Force portus-window-windows-x86_64.zip -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force -Path dist/skills/portus-window | Out-Null
+          Copy-Item target/release/portus-window.exe dist/
+          Copy-Item target/release/portus-window-cli.exe dist/
+          Copy-Item LICENSE dist/
+          Copy-Item skills/portus-window/SKILL.md dist/skills/portus-window/
+          Copy-Item scripts/install.ps1 dist/
+          Compress-Archive -Path dist/* -DestinationPath portus-window-windows-x86_64.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portus-window-windows-x86_64
+          path: portus-window-windows-x86_64.zip
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish GitHub release
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-24.04
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Publish release artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha256sum \
+            artifacts/portus-window-linux-x86_64/portus-window-linux-x86_64.tar.gz \
+            artifacts/portus-window-windows-x86_64/portus-window-windows-x86_64.zip \
+            > SHA256SUMS
+          gh release create "$RELEASE_TAG" \
+            "artifacts/portus-window-linux-x86_64/portus-window-linux-x86_64.tar.gz" \
+            "artifacts/portus-window-windows-x86_64/portus-window-windows-x86_64.zip" \
+            SHA256SUMS \
+            scripts/get-portus.sh \
+            scripts/install.ps1 \
+            --title "$RELEASE_TAG" \
+            --generate-notes

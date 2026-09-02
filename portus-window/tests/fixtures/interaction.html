@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portus Window Interaction Fixture</title>
+</head>
+<body>
+  <label>Name <input id="name" value=""></label>
+  <button id="increment" type="button">Increment</button>
+  <button id="delay" type="button">Reveal later</button>
+  <div id="count">0</div>
+  <div id="key-result">none</div>
+  <div id="delayed-root"></div>
+
+  <script>
+    const count = document.getElementById('count');
+    document.getElementById('increment').addEventListener('click', () => {
+      count.textContent = String(Number(count.textContent) + 1);
+      console.log('incremented', count.textContent);
+    });
+
+    const name = document.getElementById('name');
+    name.addEventListener('keydown', (event) => {
+      document.getElementById('key-result').textContent = event.key;
+    });
+
+    document.getElementById('delay').addEventListener('click', () => {
+      setTimeout(() => {
+        document.getElementById('delayed-root').innerHTML = '<span id="ready">ready text</span>';
+        console.log('ready');
+      }, 150);
+    });
+  </script>
+</body>
+</html>

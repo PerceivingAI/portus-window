@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portus Window Observability Fixture</title>
+</head>
+<body>
+  <button id="change-title" type="button">Change title</button>
+  <button id="log" type="button">Log message</button>
+  <button id="error" type="button">Log error</button>
+  <div id="state">initial</div>
+  <script>
+    console.log('observability-ready');
+    document.getElementById('change-title').addEventListener('click', () => {
+      document.title = 'Portus Window Observability Changed';
+      document.getElementById('state').textContent = 'title changed';
+    });
+    document.getElementById('log').addEventListener('click', () => {
+      console.log('observability-log-message');
+    });
+    document.getElementById('error').addEventListener('click', () => {
+      console.error('observability-error-message');
+    });
+  </script>
+</body>
+</html>

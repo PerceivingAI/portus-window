@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = [
+    "portus-window-protocol",
+    "portus-window",
+    "portus-window-cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88.0"
+license = "Apache-2.0"
+
+[workspace.dependencies]
+clap = { version = "4.5", features = ["derive", "env"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tempfile = "3.20"
+parking_lot = "0.12"
+rusqlite = { version = "0.32.1", features = ["bundled"] }
+time = { version = "0.3.54", features = ["formatting"] }
+dirs = "6.0"
+thiserror = "2.0"
+tokio = { version = "1.47", features = ["io-util", "macros", "net", "rt-multi-thread", "time"] }
+url = "2.5"
