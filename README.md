@@ -2,7 +2,7 @@
 
 Portus Window gives AI agents a lightweight and fast surface to display content that needs to be delivered quickly to the user while keeping heavier navigation and workflows for the browser. 
 
-An agent can open multiple web pages or local media as desktop windows on demand, then inspect/interact with them, take screenshots or capture video entirely from the built in CLI.
+An agent can open multiple web pages or local media as desktop windows on demand, then interact with them, take screenshots or capture video entirely from the built in CLI.
 
 ## How it works
 
