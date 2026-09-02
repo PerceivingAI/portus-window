@@ -1,8 +1,8 @@
 # Portus Window
 
-Portus Window gives AI agents a lightweight, fast surface to display content directly to the user. The agent can open multiple web pages or local media as desktop windows, then inspect, interact, capture, and arrange them through a CLI.
+Portus Window gives AI agents a lightweight and fast surface to display content that needs to be delivered quickly to the user while keeping heavier navigation and workflows for the browser. 
 
-The agent owns the surface: windows open on demand, are driven entirely by commands, and close when done.
+An agent can open multiple web pages or local media as desktop windows on demand, then inspect/interact with them, take screenshots or capture video entirely from the built in CLI.
 
 ## How it works
 

@@ -253,10 +253,10 @@ impl MediaAuthority {
                 });
             }
             let port = server.as_ref().expect("media server initialized").port;
-            return url::Url::parse(&format!("http://127.0.0.1:{port}/{}/view", info.token))
+            url::Url::parse(&format!("http://127.0.0.1:{port}/{}/view", info.token))
                 .map_err(|error| {
                     MediaAdmissionError::Validation(format!("invalid media URL: {error}"))
-                });
+                })
         }
         #[cfg(not(target_os = "linux"))]
         {

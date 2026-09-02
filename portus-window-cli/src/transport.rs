@@ -110,8 +110,7 @@ pub async fn execute(cli: Cli) -> CliOutcome {
             return CliOutcome::from_response(Response::error(
                 ErrorCode::DaemonUnavailable,
                 format!(
-                    "could not connect to daemon named pipe '{}': {error}",
-                    pipe_name
+                    "could not connect to daemon named pipe '{pipe_name}': {error}"
                 ),
             ));
         }
